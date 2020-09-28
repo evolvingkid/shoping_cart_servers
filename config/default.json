@@ -1,0 +1,3 @@
+{
+    "mongoURI": "mongodb+srv://apparelHubdevTeam:this_apparel_hub_db@cluster0.9xenk.mongodb.net/apparelHubdevTeam?retryWrites=true&w=majority"
+}
