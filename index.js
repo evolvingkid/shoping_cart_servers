@@ -10,7 +10,10 @@ app.use(express.json({
     extended: false
 }));
 
+
 app.get('/', (req, res) => res.send('Aparel-hub API Running'));
+
+app.use('/api/users/emailandpassword', require('./api/auth/emailandpassword'));
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server starts on  ${PORT}`));
