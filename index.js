@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 var cors = require('cors');
 const connectDB = require('./config/db');
+const firebaseAdminSDK = require('./config/firebaseadminsdk')
 
 app.use(cors());
 connectDB();
@@ -10,6 +11,7 @@ app.use(express.json({
     extended: false
 }));
 
+firebaseAdminSDK();
 
 app.get('/', (req, res) => res.send('Aparel-hub API Running'));
 

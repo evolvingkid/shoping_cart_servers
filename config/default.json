@@ -1,4 +1,6 @@
 {
     "mongoURI": "mongodb+srv://apparelHubdevTeam:this_apparel_hub_db@cluster0.9xenk.mongodb.net/apparelHubdevTeam?retryWrites=true&w=majority",
-    "server-auth-token": "73037591439635"
+    "server-auth-token": "73037591439635",
+    "password-salt-round" : 2
+
 }

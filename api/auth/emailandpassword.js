@@ -4,9 +4,11 @@ const { check, validationResult } = require('express-validator');
 const config = require('config');
 var admin = require("firebase-admin");
 const adminSdk = require('../../config/firebaseadminsdk');
+const bcrypt = require('bcrypt');
 const User = require('../../models/users');
 
 const serverAuthToken = config.get('server-auth-token');
+const saltRounds = config.get('password-salt-round');
 
 router.post('/', [
     check('password', 'Password is required').not().isEmpty(),
@@ -37,49 +39,28 @@ router.post('/', [
 
     let { email, password, name } = req.body;
 
-    try {
-        // * using firebase admin sdk 
-        adminSdk();
+    let hashPassword = await bcrypt.hash(password, saltRounds);
 
-        // * using firebase user creation 
-        let firebaseUserCreation = await admin.auth().createUser({
-            email: email,
-            emailVerified: false,
-            password: password,
-            displayName: name,
-            disabled: false
-        }).catch((error) => console.log('Error creating new user:', error));
+    user = new User({
+        name: name,
+        password: hashPassword,
+        email: email,
+        address: {
+            country: null,
+            administartion: null,
+            subadministration: null,
+            postalcode: null,
+            place: null,
+        },
+        order: null
+    });
 
-        user = new User({
-            name: name,
-            password: password,
-            email: email,
-            address: {
-                country: null,
-                administartion: null,
-                subadministration: null,
-                postalcode: null,
-                place: null,
-            },
-            order: null
-        });
-        
-        await user.save();
+    await user.save();
 
-        return res.json({
-            sucess: true,
-            data: user
-        });
-
-
-
-    } catch (error) {
-        return res.json({
-            errors: 'Error Occured'
-        });
-    }
-
-
+    return res.json({
+        sucess: true,
+        data: user
+    });
 
 });
 
