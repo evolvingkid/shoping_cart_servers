@@ -1,17 +1,18 @@
+require('dotenv').config()
+
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const config = require('config');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../../models/users');
 
-const serverAuthToken = config.get('server-auth-token');
-const saltRounds = config.get('password-salt-round');
 
-// * email and password user creation
+const serverAuthToken = config.get('server-auth-token');
+
 router.post('/', [
     check('password', 'Password is required').not().isEmpty(),
-    check('name', 'name is required').not().isEmpty(),
     check('email', 'name is required').not().isEmpty(),
 ], async (req, res) => {
 
@@ -37,34 +38,33 @@ router.post('/', [
     }
 
     try {
-        let { email, password, name } = req.body;
+        let { email, password } = req.body;
+        const userDatabase = await User.find({ email: email });
+        let hashpassword = userDatabase[0]['password'];
 
-        let hashPassword = await bcrypt.hash(password, saltRounds);
+        // * decripting password
+        bcrypt.compare(password, hashpassword, function (err, result) {
 
-        user = new User({
-            name: name,
-            password: hashPassword,
-            email: email,
-            isEmailVerified : false,
+            if (!result) {
+                return res.status(403).json({ errors: 'User credentials is wrong' });
+            }
+
+            // * for JWT token
+            const username = { email: userDatabase[0]['email'], password: userDatabase[0]['password'] };
+            const acessToken = jwt.sign(username, process.env.ACESS_TOKEN_SECRET);
+
+            return res.json({
+                sucess: true,
+                data:
+                {
+                    user: userDatabase[0],
+                    acesstoken: acessToken
+                }
+            });
+
         });
-
-        // * for using remove of dupilcated email id
-        await User.createIndexes();
-
-        await user.save();
-
-
-        return res.status(201).json({
-            sucess: true,
-            data: user
-        });
-
     } catch (error) {
-
-        return res.status(500).json({
-            errors: 'Error occured',
-        });
-
+        return res.status(500).json({ errors: 'Error occured' });
     }
 });
 
