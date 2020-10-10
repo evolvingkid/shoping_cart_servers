@@ -24,5 +24,7 @@ app.use('/api/users/emailandpassword', require('./api/auth/emailandpassword'));
 
 app.use('/api/users/auth/emailandpassword', require('./api/auth/emailandpasswordlogin'));
 
+app.use('/api/external/category', require('./api/externaldata/category'));
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server starts on  ${PORT}`));
