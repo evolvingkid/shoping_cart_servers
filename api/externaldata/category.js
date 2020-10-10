@@ -21,12 +21,24 @@ router.get('/', async (req, res) => {
         });
     }
 
-    externalcatgoryDataAcess();
+    try {
+        externalcatgoryDataAcess();
 
-    return res.json({
-        sucess: true,
-        message: 'category is started acess'
-    });
+        return res.json({
+            sucess: true,
+            message: 'category acessing compelte'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            errors: 'Error occured',
+        });
+
+    }
+
 
 
 });
