@@ -3,7 +3,7 @@ const router = express.Router();
 const config = require('config');
 
 const serverAuthToken = config.get('server-auth-token');
-const externalcatgoryDataAcess = require('../../externalAPI/category')
+const externalProductDataAcess = require('../../externalAPI/product')
 
 router.get('/', async (req, res) => {
 
@@ -22,16 +22,20 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        externalcatgoryDataAcess();
+        externalProductDataAcess();
 
         return res.json({
             sucess: true,
-            message: 'category acessing started'
+            message: 'product acessing started'
         });
 
     } catch (error) {
 
-       console.log('erorr occured on external category section');
+        console.log(error);
+
+        return res.status(500).json({
+            errors: 'Error occured',
+        });
 
     }
 
