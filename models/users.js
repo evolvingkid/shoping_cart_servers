@@ -5,6 +5,7 @@ const UsersModel = new mongoose.Schema({
     password: { type: String },
     email: {type: String, unique: true},
     isEmailVerified: { type: Boolean },
+    isExternalLogin: { type: Boolean , default : false},
 });
 
 module.exports = User = mongoose.model('UsersModel', UsersModel);
