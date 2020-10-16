@@ -32,5 +32,7 @@ app.use('/api/external/product', require('./api/externaldata/product'));
 
 app.use('/api/category', require('./api/products/category'));
 
+app.use('/api/products', require('./api/products/products'));
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server starts on  ${PORT}`));

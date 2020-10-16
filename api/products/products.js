@@ -3,7 +3,7 @@ const router = express.Router();
 const config = require('config');
 
 const serverAuthToken = config.get('server-auth-token');
-const Category = require('../../models/category');
+const Products = require('../../models/product');
 
 router.get('/', async (req, res) => {
     const token = req.header('server-auth-token');
@@ -22,14 +22,30 @@ router.get('/', async (req, res) => {
 
     try {
 
-        let { limit, random, page } = req.query;
+        let { limit, random, page, baseCategory, categories } = req.query;
 
         let fetchData;
+
+        let CustomproductModel = Products.find();
+
+        let dbQuery;
+        // * base category
+        if (baseCategory !== undefined) {
+            dbQuery = {baseCategory : baseCategory};
+        }
+        // * category
+        if (categories !== undefined) {
+            dbQuery = {categories : categories };
+        }
+
+        if (dbQuery !== undefined && dbQuery !== null) {
+            CustomproductModel = Products.find(dbQuery);
+        }
 
         // * category showing with limit
         if (limit !== undefined) {
             limit = parseInt(limit);
-            fetchData = await Category.find().limit(limit);
+            fetchData = await CustomproductModel.limit(limit);
             return res.json({
                 sucess: true,
                 data: fetchData
@@ -37,10 +53,20 @@ router.get('/', async (req, res) => {
 
         }
 
-        // * category showing with random
+        // * product showing with limit
+        if (limit !== undefined) {
+            limit = parseInt(limit);
+            fetchData = await CustomproductModel.limit(limit);
+            return res.json({
+                sucess: true,
+                data: fetchData
+            });
+        }
+
+        // * product showing with random
         if (random !== undefined) {
             random = parseInt(random);
-            fetchData = await Category.aggregate([{ $sample: { size: random } }]);
+            fetchData = await Products.aggregate([{ $sample: { size: random } }]);
             return res.json({
                 sucess: true,
                 data: fetchData
@@ -51,12 +77,12 @@ router.get('/', async (req, res) => {
         if (page !== undefined) {
             page = parseInt(page);
             if (page === 1) {
-                fetchData = await Category.find().limit(10);
+                fetchData = await CustomproductModel.limit(10);
                 return res.json(fetchData);
             }
             let skip = (page - 1) * 10;
 
-            fetchData = await Category.find().skip(skip).limit(10);
+            fetchData = await CustomproductModel.skip(skip).limit(10);
 
             if (fetchData.length === null || fetchData.length === 0) {
                 return res.status(413).json({ errors: 'unbounded page number' });
@@ -69,7 +95,7 @@ router.get('/', async (req, res) => {
         }
 
         // * base category showing
-        fetchData = await Category.find();
+        fetchData = await CustomproductModel;
 
         return res.json({
             sucess: true,
@@ -77,8 +103,6 @@ router.get('/', async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(error);
         return res.status(500).json({
             errors: 'Server error Occured'
         });
