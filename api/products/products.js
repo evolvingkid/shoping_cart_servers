@@ -22,22 +22,39 @@ router.get('/', async (req, res) => {
 
     try {
 
-        let { limit, random, page, baseCategory, categories } = req.query;
+        let { limit, random, page, baseCategory, categories, latest, size, color } = req.query;
 
         let fetchData;
 
         let CustomproductModel = Products.find();
 
-        let dbQuery;
+        let dbQuery = {};
         // * base category
         if (baseCategory !== undefined) {
-            dbQuery = {baseCategory : baseCategory};
+            dbQuery['baseCategory'] = baseCategory;
         }
         // * category
         if (categories !== undefined) {
-            dbQuery = {categories : categories };
+            dbQuery['categories'] = categories;
+        }
+        // * to get latest products
+        if (latest != undefined) {
+            dbQuery['newStyle'] = latest;
+        }
+        // * to get querry of all the sub products
+        if (size != undefined) {
+            dbQuery['subProducts.sizeCode'] = size;
+        }
+        // * to get size from sub products
+        if (size != undefined) {
+            dbQuery['subProducts.sizeCode'] = size;
+        }
+        //* to get color from sub products
+        if (color != undefined) {
+            dbQuery['subProducts.colorName'] = color;
         }
 
+        //* to parse the above query
         if (dbQuery !== undefined && dbQuery !== null) {
             CustomproductModel = Products.find(dbQuery);
         }
@@ -50,7 +67,6 @@ router.get('/', async (req, res) => {
                 sucess: true,
                 data: fetchData
             });
-
         }
 
         // * product showing with limit
@@ -103,6 +119,7 @@ router.get('/', async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             errors: 'Server error Occured'
         });
