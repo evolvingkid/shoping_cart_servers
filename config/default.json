@@ -1,7 +1,7 @@
 {
-    "mongoURI": "mongodb+srv://apparelHubdevTeam:this_apparel_hub_db@cluster0.9xenk.mongodb.net/apparelHubdevTeam?retryWrites=true&w=majority",
-    "server-auth-token": "73037591439635",
+    "mongoURI": "",
+    "server-auth-token": "",
     "password-salt-round" : 2,
-    "external-server-username": "49880",
-    "external-server-password": "d1d8acef-f82f-4e5a-81d8-edb4ae18d783"
+    "external-server-username": "",
+    "external-server-password": ""
 }
